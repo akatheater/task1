@@ -1,0 +1,6 @@
+C:\Users\akah\Desktop\OwO\Socket\SocketWorkshop\SocketClient\bin\Debug\SocketClient.exe.config
+C:\Users\akah\Desktop\OwO\Socket\SocketWorkshop\SocketClient\bin\Debug\SocketClient.exe
+C:\Users\akah\Desktop\OwO\Socket\SocketWorkshop\SocketClient\bin\Debug\SocketClient.pdb
+C:\Users\akah\Desktop\OwO\Socket\SocketWorkshop\SocketClient\obj\Debug\SocketClient.exe
+C:\Users\akah\Desktop\OwO\Socket\SocketWorkshop\SocketClient\obj\Debug\SocketClient.pdb
+C:\Users\akah\Desktop\OwO\Socket\SocketWorkshop\SocketClient\obj\Debug\SocketClient.csprojResolveAssemblyReference.cache

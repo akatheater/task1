@@ -1,0 +1,152 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+
+public class GameManager : MonoBehaviour {
+
+    private static GameManager _instance;
+
+    public static GameManager Instance
+    {
+        get
+        {
+            return _instance;
+        }
+    }
+
+
+    public int level = 1; //当前关卡
+    public int food=100;
+    public AudioClip dieClip;
+
+    public List<Enemy> enemyList = new List<Enemy>();
+    public bool isEnd = false;
+   
+    private bool sleepStep = true;
+    private Text foodText;
+    private Text failText;
+    private Player player;
+    private MapManager mapmanager;
+    private Image dayImage;
+    private Text dayText;
+
+
+	void Awake () {
+        _instance = this;
+        DontDestroyOnLoad(gameObject); 
+        InitGame();
+       
+	}
+
+    void OnEnable()  
+    {  
+        SceneManager.sceneLoaded += OnSceneLoaded;  
+    }  
+  
+    void OnDisable()  
+    {  
+        SceneManager.sceneLoaded -= OnSceneLoaded;  
+    }
+
+    void OnSceneLoaded(Scene scence, LoadSceneMode mod)
+    {   
+        level++;
+        InitGame(); }
+
+    void InitGame()
+    {
+        //初始化地图
+        mapmanager = GetComponent<MapManager>();
+        mapmanager.InitMap();
+       
+        //初始化ui
+        foodText = GameObject.Find("FoodText").GetComponent<Text>();
+        UpdateFoodText(0);
+
+        failText = GameObject.Find("FailText").GetComponent<Text>();
+        failText.enabled = false;
+
+        player=GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+        dayImage = GameObject.Find("DayImage").GetComponent<Image>();
+        dayText = GameObject.Find("DayText").GetComponent<Text>();
+        dayText.text = "Day " + level;
+        Invoke("HideBlack", 1);
+
+        //初始化参数
+        isEnd = false;
+        enemyList.Clear();
+       
+    }
+
+    public void UpdateFoodText(int foodChange)
+    {
+        if (foodChange == 0)
+        {
+            foodText.text = "Food:" + food;
+        }
+        else
+        {
+            string str = "";
+            if (foodChange < 0)
+            {
+                str = foodChange.ToString();
+            }
+            else
+            {
+                str = "+" + foodChange;             
+            }
+            foodText.text = str + " Food:" + food;
+        }
+        
+    }
+
+    public void ReduceFood(int count)
+    {
+        food -= count;
+        UpdateFoodText(-count);
+
+        if (food <= 0)
+        {
+            failText.enabled = true;
+            AudioManager.Instance.StopBgMusic();
+            AudioManager.Instance.RandomPlay(dieClip);
+        }
+    }
+    public void AddFood(int count)
+    {
+        food += count;
+        UpdateFoodText(count);
+    }
+
+    public void OnPlayerMove()
+    {
+        if (sleepStep==true)
+        {
+            sleepStep = false;
+        }
+        else
+        {
+            foreach (var enemy in enemyList)
+            {
+                enemy.Move();
+            }
+            sleepStep = true;
+        }
+
+        //检测是否到达终点
+        if (player.targetPos.x == mapmanager.cols - 2 && player.targetPos.y == mapmanager.rows - 2)
+        {
+            isEnd = true;
+            Application.LoadLevel(Application.loadedLevel); //重新加载本关卡
+
+        }
+    }
+
+
+    void HideBlack()
+    {
+        dayImage.gameObject.SetActive(false);
+    }
+}
